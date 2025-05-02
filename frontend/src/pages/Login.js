@@ -1,0 +1,117 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+const Login = () => {
+  const [email, setEmail] = useState('');
+  const [user, setUser] = useState('');
+  const [signUpemail, setSignUpEmail] = useState('');
+  const [signUpuser, setSignUpUser] = useState('');
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    if (email && user) {
+      try {
+        const response = await fetch('http://localhost:4000/users?email=' + email);
+        const data = await response.json();
+        console.log(data)
+        if (data.user_id !== 0) {
+          localStorage.setItem('user', JSON.stringify({ user_id: data.user_id, name: data.name, email }));
+          navigate('/home');
+        } else {
+          alert('user not found');
+        }
+      }catch (err) {
+        console.error('error fetching user:', err);
+        alert('error fetching user');
+      }
+    } else {
+      alert('invalid credentials');
+    }
+  };
+
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+
+    if (signUpemail && signUpuser) {
+      //setUser(signUpuser)
+      //setEmail(signUpemail)
+      try {
+        const response = await fetch('http://localhost:4000/users', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ name: signUpuser, email: signUpemail }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          localStorage.setItem('user', JSON.stringify({ user_id: data._id, signUpemail }));
+          navigate('/');
+        } else {
+          alert('error creating user');
+        }
+      } catch (err) {
+        console.error('error creating user:', err);
+        alert('error creating user');
+      }
+    } else {
+      alert('please enter valid credentials');
+    }
+  }
+  return (
+    <div className="bg-white shadow-md rounded-md">
+      <h2 className="text-2xl font-semibold text-center">To Do List</h2>
+      <form onSubmit={handleLogin} className="space-y-4 mb-6">
+        <input
+          type="text"
+          placeholder="Username"
+          value={user}
+          onChange={(e) => setUser(e.target.value)}
+          className="w-full px-4 py-2 border rounded-md"
+        />
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full px-4 py-2 border rounded-md"
+        />
+        <button
+          type="submit"
+          className="w-full bg-green-500 text-white py-2"
+        >
+          Login
+        </button>
+      </form>
+  
+      <h3 className="text-2xl font-semibold text-center"> Sign up</h3>
+      <form onSubmit={handleSignUp} className="space-y-4">
+        <input
+          type="text"
+          placeholder="Username"
+          value={signUpuser}
+          onChange={(e) => setSignUpUser(e.target.value)}
+          className="w-full px-4 py-2 border"
+        />
+        <input
+          type="email"
+          placeholder="Email"
+          value={signUpemail}
+          onChange={(e) => setSignUpEmail(e.target.value)}
+          className="w-full px-4 py-2 border"
+        />
+        <button
+          type="submit"
+          className="w-full bg-blue-500 text-white py-2"
+        >
+          Sign Up
+        </button>
+      </form>
+    </div>
+  );
+};
+
+export default Login;
