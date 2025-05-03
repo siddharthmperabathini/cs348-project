@@ -150,26 +150,28 @@ app.get('/users', async (req, res) => {
   }
 });
 
-// Create user
 app.post('/users', async (req, res) => {
-  const session = await mongoose.startSession();
   try {
-    session.startTransaction(TXN_OPTS);
-
     const { name, email } = req.body;
     const user = new User({ name, email });
-    const saveUser = await user.save({ session });
+    const savedUser = await user.save();
 
-    await session.commitTransaction();
-    res.status(201).json(saveUser);
+    res.status(201).json({
+      _id: savedUser._id,
+      name: savedUser.name,
+      email: savedUser.email
+    });
   } catch (err) {
-    console.error('error creating user:', err.message);
-    await session.abortTransaction();
-    res.status(500).json({ error: 'create users' });
-  } finally {
-    session.endSession();
+    console.error('❌ error creating user:', err);
+    if (err.code === 11000) {
+      return res.status(409).json({ error: 'Email already exists' });
+    }
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
+
 
 // Create task
 app.post('/tasks', async (req, res) => {

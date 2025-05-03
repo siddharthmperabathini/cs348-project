@@ -31,13 +31,10 @@ const Login = () => {
       alert('invalid credentials');
     }
   };
-
   const handleSignUp = async (e) => {
     e.preventDefault();
-
+  
     if (signUpemail && signUpuser) {
-      //setUser(signUpuser)
-      //setEmail(signUpemail)
       try {
         const response = await fetch(`${apiUrl}/users`, {
           method: 'POST',
@@ -46,22 +43,31 @@ const Login = () => {
           },
           body: JSON.stringify({ name: signUpuser, email: signUpemail }),
         });
-
+  
         if (response.ok) {
           const data = await response.json();
-          localStorage.setItem('user', JSON.stringify({ user_id: data._id, signUpemail }));
+          localStorage.setItem('user', JSON.stringify({
+            user_id: data._id,
+            email: signUpemail,
+            name: signUpuser,
+          }));
+          alert('User created successfully, Please log in');
           navigate('/');
+        } else if (response.status === 500) {
+          // Assuming 500 is due to email already existing
+          alert('This email already exists. Please log in instead.');
         } else {
-          alert('error creating user');
+          alert('Error creating user.');
         }
       } catch (err) {
         console.error('error creating user:', err);
-        alert('error creating user');
+        alert('Network or server error while creating user.');
       }
     } else {
-      alert('please enter valid credentials');
+      alert('Please enter valid credentials');
     }
-  }
+  };
+  
   return (
     <div className="bg-white shadow-md rounded-md">
       <h2 className="text-2xl font-semibold text-center">To Do List</h2>

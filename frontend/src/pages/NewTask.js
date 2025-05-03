@@ -45,7 +45,7 @@ const NewTask = () => {
     };
   
     try {
-      const response = await fetch('${apiUrl}/tasks/', {
+      const response = await fetch(`${apiUrl}/tasks/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
