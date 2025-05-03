@@ -14,7 +14,10 @@ const Login = () => {
 
     if (email && user) {
       try {
+        console.log('✅ API URL:', apiUrl);
+
         const response = await fetch(`${apiUrl}/users?email=` + email);
+        
         const data = await response.json();
         console.log(data)
         if (data.user_id !== 0) {
