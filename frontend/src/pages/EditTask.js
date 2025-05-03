@@ -2,6 +2,7 @@
 import React, {  useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const EditTask = () => {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ const EditTask = () => {
       setError('');
 
       const user = JSON.parse(localStorage.getItem('user'));
-      const res = await fetch(`http://localhost:4000/tasks?user_id=${user.user_id}`);
+      const res = await fetch(`${apiUrl}/tasks?user_id=${user.user_id}`);
       const tasks = await res.json();
   
       const task = tasks.find((t) => t.title.toLowerCase() === searchTitle.toLowerCase());
@@ -35,7 +36,7 @@ const EditTask = () => {
   
       let tags = [];
       try {
-        const tagRes = await fetch(`http://localhost:4000/tasks/${task._id}/tags`);
+        const tagRes = await fetch(`${apiUrl}/tasks/${task._id}/tags`);
         const tagData = await tagRes.json();
         tags = tagData.tags || [];
       } catch (tagErr) {
@@ -94,7 +95,7 @@ const EditTask = () => {
   
     try {
       if (Object.keys(updates).length > 0) {
-        const res = await fetch(`http://localhost:4000/tasks/${originalTask._id}`, {
+        const res = await fetch(`${apiUrl}/tasks/${originalTask._id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -110,7 +111,7 @@ const EditTask = () => {
       }
   
       if (tagsToAdd.length > 0) {
-        await fetch(`http://localhost:4000/tasks/${originalTask._id}/tags`, {
+        await fetch(`${apiUrl}/tasks/${originalTask._id}/tags`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ tags: tagsToAdd.join(',') }),
@@ -118,7 +119,7 @@ const EditTask = () => {
       }
   
       for (const tag of tagsToRemove) {
-        await fetch(`http://localhost:4000/tasks/${originalTask._id}/tags`, {
+        await fetch(`${apiUrl}/tasks/${originalTask._id}/tags`, {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ tagName: tag }),

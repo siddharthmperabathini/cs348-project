@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const NewTask = () => {
   const navigate = useNavigate();
@@ -44,7 +45,7 @@ const NewTask = () => {
     };
   
     try {
-      const response = await fetch('http://localhost:4000/tasks/', {
+      const response = await fetch('${apiUrl}/tasks/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -60,7 +61,7 @@ const NewTask = () => {
       }
   
       if (cleanedTags.length > 0) {
-        await fetch(`http://localhost:4000/tasks/${createdTask._id}/tags`, {
+        await fetch(`${apiUrl}/tasks/${createdTask._id}/tags`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

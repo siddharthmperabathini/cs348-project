@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -13,7 +14,7 @@ const Login = () => {
 
     if (email && user) {
       try {
-        const response = await fetch('http://localhost:4000/users?email=' + email);
+        const response = await fetch(`${apiUrl}/users?email=` + email);
         const data = await response.json();
         console.log(data)
         if (data.user_id !== 0) {
@@ -38,7 +39,7 @@ const Login = () => {
       //setUser(signUpuser)
       //setEmail(signUpemail)
       try {
-        const response = await fetch('http://localhost:4000/users', {
+        const response = await fetch(`${apiUrl}/users`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

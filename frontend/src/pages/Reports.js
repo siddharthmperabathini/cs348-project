@@ -13,6 +13,7 @@ function Reports() {
 const [averageDaysUntilDue, setAverageDaysUntilDue] = useState(0);
 const [userTags, setUserTags] = useState([]);
 const [selectedTag, setSelectedTag] = useState(''); // ✅ this holds selected tag
+const apiUrl = process.env.REACT_APP_API_URL;
 
 
 const handleReportChange = (event) => {
@@ -70,11 +71,11 @@ const handleSelectTag = (e) => {
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       if (user) {
-        const response = await fetch(`http://localhost:4000/tasks/completed?user_id=${user.user_id}`);
+        const response = await fetch(`${apiUrl}/tasks/completed?user_id=${user.user_id}`);
         const data = await response.json();
         const tasksWithTags = await Promise.all(
           data.map(async (task) => {
-            const tagRes = await fetch(`http://localhost:4000/tasks/${task._id}/tags`);
+            const tagRes = await fetch(`${apiUrl}/tasks/${task._id}/tags`);
             const tagData = await tagRes.json();
             return { ...task, tags: tagData.tags || [] };
           })
@@ -90,11 +91,11 @@ const handleSelectTag = (e) => {
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       if (user) {
-        const response = await fetch(`http://localhost:4000/tasks/incomplete?user_id=${user.user_id}`);
+        const response = await fetch(`${apiUrl}/tasks/incomplete?user_id=${user.user_id}`);
         const data = await response.json();
         const tasksWithTags = await Promise.all(
           data.map(async (task) => {
-            const tagRes = await fetch(`http://localhost:4000/tasks/${task._id}/tags`);
+            const tagRes = await fetch(`${apiUrl}/tasks/${task._id}/tags`);
             const tagData = await tagRes.json();
             return { ...task, tags: tagData.tags || [] };
           })
@@ -111,11 +112,11 @@ const handleSelectTag = (e) => {
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       if (user) {
-        const response = await fetch(`http://localhost:4000/tasks/overdue?user_id=${user.user_id}`);
+        const response = await fetch(`${apiUrl}/tasks/overdue?user_id=${user.user_id}`);
         const data = await response.json();
         const tasksWithTags = await Promise.all(
           data.map(async (task) => {
-            const tagRes = await fetch(`http://localhost:4000/tasks/${task._id}/tags`);
+            const tagRes = await fetch(`${apiUrl}/tasks/${task._id}/tags`);
             const tagData = await tagRes.json();
             return { ...task, tags: tagData.tags || [] };
           })
@@ -146,11 +147,11 @@ const handleSelectTag = (e) => {
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       if (user && startDate && endDate) {
-        const response = await fetch(`http://localhost:4000/tasks/completedByDate?user_id=${user.user_id}&startDate=${startDate}&endDate=${endDate}`);
+        const response = await fetch(`${apiUrl}/tasks/completedByDate?user_id=${user.user_id}&startDate=${startDate}&endDate=${endDate}`);
         const data = await response.json();
         const tasksWithTags = await Promise.all(
           data.map(async (task) => {
-            const tagRes = await fetch(`http://localhost:4000/tasks/${task._id}/tags`);
+            const tagRes = await fetch(`${apiUrl}/tasks/${task._id}/tags`);
             const tagData = await tagRes.json();
             return { ...task, tags: tagData.tags || [] };
           })
@@ -165,11 +166,11 @@ const handleSelectTag = (e) => {
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       if (user && startDate && endDate) {
-        const response = await fetch(`http://localhost:4000/tasks/incompleteByDate?user_id=${user.user_id}&startDate=${startDate}&endDate=${endDate}`);
+        const response = await fetch(`${apiUrl}/tasks/incompleteByDate?user_id=${user.user_id}&startDate=${startDate}&endDate=${endDate}`);
         const data = await response.json();
         const tasksWithTags = await Promise.all(
           data.map(async (task) => {
-            const tagRes = await fetch(`http://localhost:4000/tasks/${task._id}/tags`);
+            const tagRes = await fetch(`${apiUrl}/tasks/${task._id}/tags`);
             const tagData = await tagRes.json();
             return { ...task, tags: tagData.tags || [] };
           })
@@ -184,7 +185,7 @@ const handleSelectTag = (e) => {
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       if (user && startDate && endDate) {
-        const response = await fetch(`http://localhost:4000/tasks/completionPercentageByDate?user_id=${user.user_id}&startDate=${startDate}&endDate=${endDate}`);
+        const response = await fetch(`${apiUrl}/tasks/completionPercentageByDate?user_id=${user.user_id}&startDate=${startDate}&endDate=${endDate}`);
         const data = await response.json();
         setCompletionPercentageByDate(Math.round(data.completionPercentage));
       }
@@ -198,7 +199,7 @@ const handleSelectTag = (e) => {
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       if (user && endDate) {
-        const response = await fetch(`http://localhost:4000/tasks/countUntilDueDate?user_id=${user.user_id}&endDate=${endDate}`);
+        const response = await fetch(`${apiUrl}/tasks/countUntilDueDate?user_id=${user.user_id}&endDate=${endDate}`);
         const data = await response.json();
         setTotalTasksToComplete(data.totalTasksToComplete || 0);
       }
@@ -211,7 +212,7 @@ const handleSelectTag = (e) => {
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       if (user && endDate) {
-        const response = await fetch(`http://localhost:4000/tasks/averageDaysUntilDue?user_id=${user.user_id}&endDate=${endDate}`);
+        const response = await fetch(`${apiUrl}/tasks/averageDaysUntilDue?user_id=${user.user_id}&endDate=${endDate}`);
         const data = await response.json();
         setAverageDaysUntilDue(Math.round(data.averageDaysUntilDue || 0));
       }
@@ -228,7 +229,7 @@ const handleSelectTag = (e) => {
       }
   
       // Step 1: Fetch all tasks for the user
-      const tasksRes = await fetch(`http://localhost:4000/tasks?user_id=${user.user_id}`);
+      const tasksRes = await fetch(`${apiUrl}/tasks?user_id=${user.user_id}`);
       const tasksData = await tasksRes.json();
   
       // Step 2: Fetch all tags for each task
@@ -236,7 +237,7 @@ const handleSelectTag = (e) => {
   
       await Promise.all(
         tasksData.map(async (task) => {
-          const tagRes = await fetch(`http://localhost:4000/tasks/${task._id}/tags`);
+          const tagRes = await fetch(`${apiUrl}/tasks/${task._id}/tags`);
           const tagData = await tagRes.json();
           if (tagData.tags && tagData.tags.length > 0) {
             tagData.tags.forEach(tag => allTagsSet.add(tag));
@@ -268,7 +269,7 @@ const handleSelectTag = (e) => {
         return;
       }
   
-      const response = await fetch(`http://localhost:4000/tasks/averageTasksPerTag?user_id=${user.user_id}`);
+      const response = await fetch(`${apiUrl}/tasks/averageTasksPerTag?user_id=${user.user_id}`);
       const data = await response.json();
       setAverageTasksPerTag(data.averageTasksPerTag || 0);
     } catch (error) {
@@ -284,7 +285,7 @@ const handleSelectTag = (e) => {
         return;
       }
   
-      const response = await fetch(`http://localhost:4000/tasks/mostUsedTag?user_id=${user.user_id}`);
+      const response = await fetch(`${apiUrl}/tasks/mostUsedTag?user_id=${user.user_id}`);
       const data = await response.json();
       setMostUsedTag(data.tagName || "None");
     } catch (error) {
@@ -303,7 +304,7 @@ const handleSelectTag = (e) => {
         return;
       }
   
-      const response = await fetch(`http://localhost:4000/tasks/tagRank?user_id=${user.user_id}&tagName=${encodeURIComponent(tagName)}`);
+      const response = await fetch(`${apiUrl}/tasks/tagRank?user_id=${user.user_id}&tagName=${encodeURIComponent(tagName)}`);
       const data = await response.json();
       setTagRank(data.rank);
     } catch (error) {
@@ -318,7 +319,7 @@ const handleSelectTag = (e) => {
         return;
       }
   
-      const response = await fetch(`http://localhost:4000/tasks/averagePriorityByTag?user_id=${user.user_id}&tagName=${encodeURIComponent(tagName)}`);
+      const response = await fetch(`${apiUrl}/tasks/averagePriorityByTag?user_id=${user.user_id}&tagName=${encodeURIComponent(tagName)}`);
       const data = await response.json();
       setAveragePriorityForTag(data.averagePriority);
     } catch (error) {
@@ -337,7 +338,7 @@ const handleSelectTag = (e) => {
         return;
       }
   
-      const response = await fetch(`http://localhost:4000/tasks/byTag?user_id=${user.user_id}&tagName=${encodeURIComponent(tagName)}`);
+      const response = await fetch(`${apiUrl}/tasks/byTag?user_id=${user.user_id}&tagName=${encodeURIComponent(tagName)}`);
       const data = await response.json();
       setTasksBySelectedTag(data);
     } catch (error) {

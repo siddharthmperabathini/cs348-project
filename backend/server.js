@@ -129,6 +129,7 @@ app.put('/tasks/:id', async (req, res) => {
 // Get users
 app.get('/users', async (req, res) => {
   const { email } = req.query;
+  console.log('🔍 /users route hit with query:', req.query);
   const session = await mongoose.startSession();
   try {
     session.startTransaction(TXN_OPTS);
@@ -839,15 +840,32 @@ app.get('/tasks/byTag', async (req, res) => {
   }
 });
 
-mongoose
-  .connect(MONGO_URI)
-  .then(() => {
-    console.log('Connected to MongoDB');
-    const port = process.env.PORT || 3000;
-    app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
+// mongoose
+//   .connect(MONGO_URI)
+//   .then(() => {
+//     console.log('Connected to MongoDB');
+//     const port = process.env.PORT || 3000;
+//     app.listen(port, () => {
+//       console.log(`Server is running on port ${port}`);
+//     });
+//   })
+//   .catch(err => {
+//     console.error('Failed to connect to MongoDB:', err);
+//   });
+const PORT = process.env.PORT || 8080;
+
+async function startServer() {
+  try {
+    await mongoose.connect(MONGO_URI);
+    console.log('✅ Connected to MongoDB');
+
+    app.listen(PORT, () => {
+      console.log(`🚀 Server is running on http://localhost:${PORT}`);
     });
-  })
-  .catch(err => {
-    console.error('Failed to connect to MongoDB:', err);
-  });
+  } catch (error) {
+    console.error('❌ MongoDB connection failed:', error);
+    process.exit(1); // Exit the app if DB connection fails
+  }
+}
+
+startServer();

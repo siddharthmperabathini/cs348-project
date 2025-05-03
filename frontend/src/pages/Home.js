@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const Home = () => {
   const navigate = useNavigate();
@@ -22,11 +23,11 @@ const fetchTasks = async () => {
   try {
     const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
-      const response = await fetch(`http://localhost:4000/tasks?user_id=${user.user_id}`);
+      const response = await fetch(`${apiUrl}/tasks?user_id=${user.user_id}`);
       const data = await response.json();
       const tasksWithTags = await Promise.all(
         data.map(async (task) => {
-          const tagRes = await fetch(`http://localhost:4000/tasks/${task._id}/tags`);
+          const tagRes = await fetch(`${apiUrl}/tasks/${task._id}/tags`);
           const tagData = await tagRes.json();
           return { ...task, tags: tagData.tags || [] };
         })
@@ -47,7 +48,7 @@ const fetchTasks = async () => {
 
   const handleDelete = async (taskId) => {
     try {
-      const response = await fetch(`http://localhost:4000/tasks/${taskId}`, {
+      const response = await fetch(`${apiUrl}/tasks/${taskId}`, {
         method: 'DELETE',
       });
 
