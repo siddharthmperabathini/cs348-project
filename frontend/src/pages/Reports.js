@@ -72,21 +72,32 @@ const handleSelectTag = (e) => {
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       if (user) {
-        const response = await fetch(`${apiUrl}/tasks/completed?user_id=${user.user_id}`);
+        console.log('Fetching completed tasks for user ID:', user.user_id); // ✅ Log user ID
+  
+        const completedTasksUrl = `${apiUrl}/tasks/completed?user_id=${user.user_id}`;
+        console.log('API Call:', completedTasksUrl); // ✅ Log the full API URL
+  
+        const response = await fetch(completedTasksUrl);
         const data = await response.json();
+  
         const tasksWithTags = await Promise.all(
           data.map(async (task) => {
-            const tagRes = await fetch(`${apiUrl}/tasks/${task._id}/tags`);
+            const tagUrl = `${apiUrl}/tasks/${task._id}/tags`;
+            console.log('Fetching tags from:', tagUrl); // ✅ Optional: log each tag fetch
+            const tagRes = await fetch(tagUrl);
             const tagData = await tagRes.json();
             return { ...task, tags: tagData.tags || [] };
           })
         );
+  
         setCompletedTasks(tasksWithTags);
       }
     } catch (error) {
       console.error('error fetching completed tasks:', error);
     }
   };
+  
+  
 
   const fetchIncompleteTasks = async () => {
     try {
