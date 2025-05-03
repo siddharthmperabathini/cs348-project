@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
-
+//const apiUrl = process.env.REACT_APP_API_URL;
+const apiUrl = 'https://backend-439597190473.us-central1.run.app';
 function Reports() {
   const [selectedReport, setSelectedReport] = useState('');
   const [completedTasks, setCompletedTasks] = useState([]);

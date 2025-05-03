@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-const apiUrl = process.env.REACT_APP_API_URL;
+//const apiUrl = process.env.REACT_APP_API_URL;
+const apiUrl = 'https://backend-439597190473.us-central1.run.app';
 
 const Home = () => {
   const navigate = useNavigate();
