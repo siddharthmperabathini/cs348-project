@@ -13,7 +13,7 @@ function Reports() {
   const [totalTasksToComplete, setTotalTasksToComplete] = useState(0);
 const [averageDaysUntilDue, setAverageDaysUntilDue] = useState(0);
 const [userTags, setUserTags] = useState([]);
-const [selectedTag, setSelectedTag] = useState(''); // ✅ this holds selected tag
+const [selectedTag, setSelectedTag] = useState(''); 
 const apiUrl = process.env.REACT_APP_API_URL;
 
 
@@ -27,10 +27,10 @@ const handleReportChange = (event) => {
     fetchOverdueTasks();
   } 
   else if (reportType === "tags") {
-    setSelectedTag(''); // reset selected tag
+    setSelectedTag(''); 
     fetchAllTagsForUser();
-    fetchAverageTasksPerTag(); // ✅ NEW
-    fetchMostUsedTag();        // ✅ NEW
+    fetchAverageTasksPerTag(); 
+    fetchMostUsedTag();       
   }
 };
 
@@ -41,9 +41,9 @@ const handleSelectTag = (e) => {
   if (selected) {
     fetchTagRank(selected);
     fetchAveragePriorityForTag(selected);
-    fetchTasksBySelectedTag(selected); // ✅ NEW LINE: fetch tasks for this tag
+    fetchTasksBySelectedTag(selected); 
   } else {
-    setTasksBySelectedTag([]); // 🧹 Clear if no tag is selected
+    setTasksBySelectedTag([]); 
   }
 };
 
@@ -72,10 +72,10 @@ const handleSelectTag = (e) => {
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       if (user) {
-        console.log('Fetching completed tasks for user ID:', user.user_id); // ✅ Log user ID
+        console.log('Fetching completed tasks for user ID:', user.user_id); 
   
         const completedTasksUrl = `${apiUrl}/tasks/completed?user_id=${user.user_id}`;
-        console.log('API Call:', completedTasksUrl); // ✅ Log the full API URL
+        console.log('API Call:', completedTasksUrl); 
   
         const response = await fetch(completedTasksUrl);
         const data = await response.json();
@@ -83,7 +83,7 @@ const handleSelectTag = (e) => {
         const tasksWithTags = await Promise.all(
           data.map(async (task) => {
             const tagUrl = `${apiUrl}/tasks/${task._id}/tags`;
-            console.log('Fetching tags from:', tagUrl); // ✅ Optional: log each tag fetch
+            console.log('Fetching tags from:', tagUrl); 
             const tagRes = await fetch(tagUrl);
             const tagData = await tagRes.json();
             return { ...task, tags: tagData.tags || [] };
@@ -147,8 +147,8 @@ const handleSelectTag = (e) => {
     const today = new Date();
     const totalOverdueDays = overdueTasks.reduce((sum, task) => {
       const dueDate = new Date(task.due_date);
-      const diffTime = today - dueDate; // in milliseconds
-      const diffDays = diffTime / (1000 * 60 * 60 * 24); // convert to days
+      const diffTime = today - dueDate; 
+      const diffDays = diffTime / (1000 * 60 * 60 * 24); 
       return sum + diffDays;
     }, 0);
   
@@ -240,11 +240,9 @@ const handleSelectTag = (e) => {
         return;
       }
   
-      // Step 1: Fetch all tasks for the user
       const tasksRes = await fetch(`${apiUrl}/tasks?user_id=${user.user_id}`);
       const tasksData = await tasksRes.json();
   
-      // Step 2: Fetch all tags for each task
       const allTagsSet = new Set();
   
       await Promise.all(
@@ -257,12 +255,10 @@ const handleSelectTag = (e) => {
         })
       );
   
-      // Step 3: Save unique tags into state
       const allTagsArray = Array.from(allTagsSet);
       setUserTags(allTagsArray);
   
-      // 📋 Console log the final array
-      //console.log('All User Tags:', allTagsArray);
+
   
     } catch (error) {
       console.error('Error fetching all tags for user:', error);
@@ -373,7 +369,7 @@ const handleSelectTag = (e) => {
     <>
       <Navbar />
       <div className="p-6">
-        {/* Dropdown */}
+
         <div className="mb-6">
           <label className="block mb-2 text-lg font-semibold">Select Report Type:</label>
           <select
@@ -388,16 +384,16 @@ const handleSelectTag = (e) => {
           </select>
         </div>
 
-        {/* Show different content based on selected report */}
+
         <div className="mt-6">
           
-          {/* Show different content based on selected report */}
+
 <div className="mt-6">
 {selectedReport === "summary" && (
   <div>
     <h2 className="text-2xl font-bold mb-4">Overall Summary of Tasks</h2>
 
-    {/* Completion Percentage */}
+
     <h3 className="text-xl font-bold mb-2">Completion Percentage</h3>
     <p className="text-lg mb-6">
       {completedTasks.length + incompleteTasks.length === 0
@@ -405,7 +401,6 @@ const handleSelectTag = (e) => {
         : `${Math.round((completedTasks.length / (completedTasks.length + incompleteTasks.length)) * 100)}% completed`}
     </p>
 
-    {/* Completed Tasks */}
     <h3 className="text-xl font-bold mb-2">Completed Tasks</h3>
     {completedTasks.length === 0 ? (
       <p>No completed tasks available.</p>
@@ -441,7 +436,7 @@ const handleSelectTag = (e) => {
       </ul>
     )}
 
-    {/* Incomplete Tasks */}
+
     <h3 className="text-xl font-bold mt-8 mb-2">Incomplete Tasks</h3>
     {incompleteTasks.length === 0 ? (
       <p>No incomplete tasks available.</p>
@@ -477,7 +472,6 @@ const handleSelectTag = (e) => {
       </ul>
     )}
 
-    {/* Overdue Tasks */}
     <h3 className="text-xl font-bold mt-8 mb-2">Overdue Tasks</h3>
     {overdueTasks.length === 0 ? (
       <p>No overdue tasks available.</p>
@@ -513,7 +507,7 @@ const handleSelectTag = (e) => {
       </ul>
     )}
 
-    {/* Average Days Overdue */}
+
 <h3 className="text-xl font-bold mb-2 mt-8">Average Days Overdue</h3>
 <p className="text-lg mb-6">
   {overdueTasks.length === 0
@@ -530,7 +524,7 @@ const handleSelectTag = (e) => {
   <div>
     <h2 className="text-2xl font-bold mb-4">Tasks by Due Date Range</h2>
 
-    {/* Start Date */}
+
     <div className="mb-4">
       <label className="block mb-2 font-semibold">Start Date:</label>
       <input
@@ -541,7 +535,7 @@ const handleSelectTag = (e) => {
       />
     </div>
 
-    {/* End Date */}
+
     <div className="mb-4">
       <label className="block mb-2 font-semibold">End Date:</label>
       <input
@@ -552,7 +546,7 @@ const handleSelectTag = (e) => {
       />
     </div>
 
-    {/* Submit Button */}
+
     <button
       onClick={handleSubmitDateRange}
       className="bg-black text-white py-2 px-4 rounded hover:bg-gray-800"
@@ -560,11 +554,11 @@ const handleSelectTag = (e) => {
       Submit
     </button>
 
-    {/* Show Results After Submit */}
+
     {completedTasks.length > 0 || incompleteTasks.length > 0 ? (
       <div className="mt-10">
 
-        {/* Completed Tasks */}
+
         <h3 className="text-xl font-bold mb-4">Completed Tasks</h3>
         {completedTasks.length === 0 ? (
           <p>No completed tasks in this range.</p>
@@ -600,7 +594,6 @@ const handleSelectTag = (e) => {
           </ul>
         )}
 
-        {/* Incomplete Tasks */}
         <h3 className="text-xl font-bold mt-10 mb-4">Incomplete Tasks</h3>
         {incompleteTasks.length === 0 ? (
           <p>No incomplete tasks in this range.</p>
@@ -636,20 +629,17 @@ const handleSelectTag = (e) => {
           </ul>
         )}
 
-        {/* Completion Percentage */}
+
         <h3 className="text-xl font-bold mt-10 mb-2">Completion Percentage:</h3>
         <p className="text-lg mb-6">
           {completionPercentageByDate}% completed
         </p>
 
-        {/* Summary Numbers after date range search */}
 <div className="mt-10">
 
-{/* Total Tasks to Complete */}
 <h3 className="text-xl font-bold mb-2">Total Tasks To Complete Until End Date:</h3>
 <p className="text-lg mb-6">{totalTasksToComplete} task{totalTasksToComplete !== 1 ? "s" : ""} to finish</p>
 
-{/* Average Days Until Due */}
 <h3 className="text-xl font-bold mb-2">Average Days Until Due:</h3>
 <p className="text-lg mb-6">
   {averageDaysUntilDue === 0 
@@ -672,12 +662,10 @@ const handleSelectTag = (e) => {
   <div>
     <h2 className="text-2xl font-bold mb-6">Tasks by Tags</h2>
 
-    {/* Total number of tags */}
     <p className="mb-6">
       You have <strong>{userTags.length}</strong> unique tag{userTags.length !== 1 ? "s" : ""}.
     </p>
 
-    {/* List of all tags */}
     {userTags.length > 0 && (
       <div className="mb-8">
         <h3 className="text-lg font-semibold mb-2">All Your Tags:</h3>
@@ -687,13 +675,11 @@ const handleSelectTag = (e) => {
           ))}
         </ul>
 
-        {/* Average Tasks Per Tag */}
         <h3 className="text-xl font-bold mb-2 mt-6">Average Tasks Per Tag:</h3>
         <p className="text-lg mb-6">
           {averageTasksPerTag ? `${averageTasksPerTag} tasks/tag` : "No tags found."}
         </p>
 
-        {/* Most Used Tag */}
         <h3 className="text-xl font-bold mb-2">Most Used Tag:</h3>
         <p className="text-lg mb-6">
           {mostUsedTag ? mostUsedTag : "No tag used yet."}
@@ -701,7 +687,6 @@ const handleSelectTag = (e) => {
       </div>
     )}
 
-    {/* Dropdown to select a tag */}
     <div className="mb-8">
       <label className="block mb-2 font-semibold">Select a Tag:</label>
       <select
@@ -718,21 +703,17 @@ const handleSelectTag = (e) => {
       </select>
     </div>
 
-    {/* Show info about selected tag */}
     {selectedTag && (
       <div className="mt-10">
         <h3 className="text-xl font-bold mb-4">Selected Tag Info:</h3>
 
-        {/* Selected tag name */}
         <p className="text-lg mb-4"><strong>Tag:</strong> {selectedTag}</p>
 
-        {/* Tag Rank */}
         <p className="text-lg mb-4">
           <strong>Tag Rank:</strong>{" "}
           {tagRank ? `#${tagRank} most used` : "Rank not available."}
         </p>
 
-        {/* Average Priority */}
         <p className="text-lg mb-8">
           <strong>Average Priority:</strong>{" "}
           {averagePriorityForTag !== null 
@@ -740,7 +721,6 @@ const handleSelectTag = (e) => {
             : "Average priority not available."}
         </p>
 
-        {/* Tasks linked to this tag */}
         <h3 className="text-xl font-bold mb-4">Tasks with Selected Tag:</h3>
 
         {tasksBySelectedTag.length === 0 ? (

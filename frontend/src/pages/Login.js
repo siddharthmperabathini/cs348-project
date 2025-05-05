@@ -16,7 +16,7 @@ const Login = () => {
 
     if (email && user) {
       try {
-        console.log('✅ API URL:', apiUrl);
+        console.log('API URL:', apiUrl);
 
         const response = await fetch(`${apiUrl}/users?email=` + email);
         
@@ -59,7 +59,6 @@ const Login = () => {
           alert('User created successfully, Please log in');
           navigate('/');
         } else if (response.status === 500) {
-          // Assuming 500 is due to email already existing
           alert('This email already exists. Please log in instead.');
         } else {
           alert('Error creating user.');

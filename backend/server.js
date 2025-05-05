@@ -15,13 +15,11 @@ app.use(cors());
 app.use(mongoSanitize());
 
 const MONGO_URI = process.env.MONGO_URI;
-// Default transaction options: snapshot isolation & majority writes
 const TXN_OPTS = {
   readConcern: { level: 'snapshot' },
   writeConcern: { w: 'majority' }
 };
 
-// Root endpoint
 app.get('/', async (req, res) => {
   const session = await mongoose.startSession();
   try {
@@ -36,7 +34,6 @@ app.get('/', async (req, res) => {
   }
 });
 
-// Delete Task with Transaction and Isolation
 app.delete('/tasks/:id', async (req, res) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -71,7 +68,6 @@ app.delete('/tasks/:id', async (req, res) => {
   }
 });
 
-// Get tasks
 app.get('/tasks', async (req, res) => {
   const { user_id } = req.query;
   const session = await mongoose.startSession();
@@ -93,7 +89,6 @@ app.get('/tasks', async (req, res) => {
   }
 });
 
-// Update task
 app.put('/tasks/:id', async (req, res) => {
   const { id } = req.params;
   const data_update = req.body;
@@ -126,7 +121,6 @@ app.put('/tasks/:id', async (req, res) => {
   }
 });
 
-// Get users
 app.get('/users', async (req, res) => {
   const { email } = req.query;
   console.log('🔍 /users route hit with query:', req.query);
@@ -173,7 +167,6 @@ app.post('/users', async (req, res) => {
 
 
 
-// Create task
 app.post('/tasks', async (req, res) => {
   const session = await mongoose.startSession();
   try {
@@ -194,7 +187,6 @@ app.post('/tasks', async (req, res) => {
   }
 });
 
-// Create tag relationships
 app.post('/tasks/:id/tags', async (req, res) => {
   const { id: taskId } = req.params;
   let { tags } = req.body;
@@ -233,7 +225,6 @@ app.post('/tasks/:id/tags', async (req, res) => {
   }
 });
 
-// Delete tag relationship
 app.delete('/tasks/:id/tags', async (req, res) => {
   const { id: taskId } = req.params;
   const { tagName } = req.body;
@@ -270,7 +261,6 @@ app.delete('/tasks/:id/tags', async (req, res) => {
   }
 });
 
-// Get tags for a task
 app.get('/tasks/:id/tags', async (req, res) => {
   const { id: taskId } = req.params;
   const session = await mongoose.startSession();
@@ -297,7 +287,6 @@ app.get('/tasks/:id/tags', async (req, res) => {
   }
 });
 
-// Get completed tasks
 app.get('/tasks/completed', async (req, res) => {
   const { user_id } = req.query;
   if (!user_id || !mongoose.Types.ObjectId.isValid(user_id)) {
@@ -322,7 +311,6 @@ app.get('/tasks/completed', async (req, res) => {
   }
 });
 
-// Get incomplete tasks
 app.get('/tasks/incomplete', async (req, res) => {
   const { user_id } = req.query;
   if (!user_id || !mongoose.Types.ObjectId.isValid(user_id)) {
@@ -347,7 +335,6 @@ app.get('/tasks/incomplete', async (req, res) => {
   }
 });
 
-// Get overdue tasks
 app.get('/tasks/overdue', async (req, res) => {
   const { user_id } = req.query;
   if (!user_id || !mongoose.Types.ObjectId.isValid(user_id)) {
@@ -378,7 +365,6 @@ app.get('/tasks/overdue', async (req, res) => {
   }
 });
 
-// Completed by date
 app.get('/tasks/completedByDate', async (req, res) => {
   const { user_id, startDate, endDate } = req.query;
   if (!user_id || !startDate || !endDate || !mongoose.Types.ObjectId.isValid(user_id)) {
@@ -407,7 +393,6 @@ app.get('/tasks/completedByDate', async (req, res) => {
   }
 });
 
-// Incomplete by date
 app.get('/tasks/incompleteByDate', async (req, res) => {
   const { user_id, startDate, endDate } = req.query;
   if (!user_id || !startDate || !endDate || !mongoose.Types.ObjectId.isValid(user_id)) {
@@ -436,7 +421,6 @@ app.get('/tasks/incompleteByDate', async (req, res) => {
   }
 });
 
-// Completion percentage by date
 app.get('/tasks/completionPercentageByDate', async (req, res) => {
   const { user_id, startDate, endDate } = req.query;
   if (!user_id || !startDate || !endDate || !mongoose.Types.ObjectId.isValid(user_id)) {
@@ -488,7 +472,6 @@ app.get('/tasks/completionPercentageByDate', async (req, res) => {
   }
 });
 
-// Count until due date
 app.get('/tasks/countUntilDueDate', async (req, res) => {
   const { user_id, endDate } = req.query;
   if (!user_id || !endDate || !mongoose.Types.ObjectId.isValid(user_id)) {
@@ -515,7 +498,6 @@ app.get('/tasks/countUntilDueDate', async (req, res) => {
   }
 });
 
-// Average days until due
 app.get('/tasks/averageDaysUntilDue', async (req, res) => {
   const { user_id, endDate } = req.query;
   if (!user_id || !endDate || !mongoose.Types.ObjectId.isValid(user_id)) {
@@ -564,7 +546,6 @@ app.get('/tasks/averageDaysUntilDue', async (req, res) => {
   }
 });
 
-// Average tasks per tag
 app.get('/tasks/averageTasksPerTag', async (req, res) => {
   const { user_id } = req.query;
   if (!user_id || !mongoose.Types.ObjectId.isValid(user_id)) {
@@ -603,7 +584,6 @@ app.get('/tasks/averageTasksPerTag', async (req, res) => {
   }
 });
 
-// Most used tag
 app.get('/tasks/mostUsedTag', async (req, res) => {
   const { user_id } = req.query;
   if (!user_id || !mongoose.Types.ObjectId.isValid(user_id)) {
@@ -614,7 +594,6 @@ app.get('/tasks/mostUsedTag', async (req, res) => {
     session.startTransaction(TXN_OPTS);
 
     const pipeline = [
-      // join to tasks
       { $lookup: {
           from: 'todoList.tasks',
           localField: 'task_id',
@@ -622,17 +601,14 @@ app.get('/tasks/mostUsedTag', async (req, res) => {
           as: 'task'
       }},
       { $unwind: '$task' },
-      // only this user's tasks
       { $match: { 'task.user_id': new mongoose.Types.ObjectId(user_id) } },
 
-      // count per tag
       { $group: {
           _id: '$tag_id',
           usageCount: { $sum: 1 }
       }},
       { $sort: { usageCount: -1 } },
 
-      // now join to tags to filter out null/"None"
       { $lookup: {
           from: 'todoList.tags',
           localField: '_id',
@@ -642,10 +618,8 @@ app.get('/tasks/mostUsedTag', async (req, res) => {
       { $unwind: '$tag' },
       { $match: { 'tag.tagName': { $nin: [ null, 'None' ] } } },
 
-      // pick the top one
       { $limit: 1 },
 
-      // project the shape we want
       { $project: {
           _id: 0,
           tagName: '$tag.tagName',
@@ -659,7 +633,6 @@ app.get('/tasks/mostUsedTag', async (req, res) => {
     if (result.length) {
       res.json(result[0]);
     } else {
-      // no real tags at all
       res.json({ message: 'No tags found for this user' });
     }
   } catch (err) {
@@ -671,7 +644,6 @@ app.get('/tasks/mostUsedTag', async (req, res) => {
   }
 });
 
-// Tag rank
 app.get('/tasks/tagRank', async (req, res) => {
   const { user_id, tagName } = req.query;
   if (!user_id || !mongoose.Types.ObjectId.isValid(user_id) || !tagName) {
@@ -681,16 +653,13 @@ app.get('/tasks/tagRank', async (req, res) => {
   try {
     session.startTransaction(TXN_OPTS);
 
-    // make sure it's a real tag (and not our placeholder "None")
     const tagDoc = await Tag.findOne({ tagName }).session(session);
     if (!tagDoc || tagDoc.tagName === 'None') {
       await session.abortTransaction();
       return res.status(404).json({ error: 'Tag not found or invalid' });
     }
 
-    // aggregate all TagRel for this user, but exclude any tagName null/"None"
     const tagsRank = await TagRel.aggregate([
-      // join to tasks
       { $lookup: {
           from: 'todoList.tasks',
           localField: 'task_id',
@@ -700,13 +669,11 @@ app.get('/tasks/tagRank', async (req, res) => {
       { $unwind: '$task' },
       { $match: { 'task.user_id': new mongoose.Types.ObjectId(user_id) } },
 
-      // count per tag_id
       { $group: {
           _id: '$tag_id',
           usageCount: { $sum: 1 }
       }},
 
-      // join to tags so we can drop those with null/"None"
       { $lookup: {
           from: 'todoList.tags',
           localField: '_id',
@@ -716,7 +683,6 @@ app.get('/tasks/tagRank', async (req, res) => {
       { $unwind: '$tag' },
       { $match: { 'tag.tagName': { $nin: [ null, 'None' ] } } },
 
-      // order by frequency
       { $sort: { usageCount: -1 } }
     ]).session(session);
 
@@ -724,7 +690,7 @@ app.get('/tasks/tagRank', async (req, res) => {
 
     const idx = tagsRank.findIndex(d => d._id.toString() === tagDoc._id.toString());
     if (idx === -1) {
-      return res.json({ rank: null });  // this tag isn't used at all
+      return res.json({ rank: null });  
     }
     res.json({ rank: idx + 1 });
   } catch (err) {
@@ -737,7 +703,6 @@ app.get('/tasks/tagRank', async (req, res) => {
 });
 
 
-// Average priority by tag
 app.get('/tasks/averagePriorityByTag', async (req, res) => {
   const { user_id, tagName } = req.query;
   if (!user_id || !mongoose.Types.ObjectId.isValid(user_id) || !tagName) {
@@ -794,7 +759,6 @@ app.get('/tasks/averagePriorityByTag', async (req, res) => {
   }
 });
 
-// Get tasks by tag
 app.get('/tasks/byTag', async (req, res) => {
   const { user_id, tagName } = req.query;
   if (!user_id || !mongoose.Types.ObjectId.isValid(user_id) || !tagName) {
@@ -842,31 +806,20 @@ app.get('/tasks/byTag', async (req, res) => {
   }
 });
 
-// mongoose
-//   .connect(MONGO_URI)
-//   .then(() => {
-//     console.log('Connected to MongoDB');
-//     const port = process.env.PORT || 3000;
-//     app.listen(port, () => {
-//       console.log(`Server is running on port ${port}`);
-//     });
-//   })
-//   .catch(err => {
-//     console.error('Failed to connect to MongoDB:', err);
-//   });
+
 const PORT = process.env.PORT || 8080;
 
 async function startServer() {
   try {
     await mongoose.connect(MONGO_URI);
-    console.log('✅ Connected to MongoDB');
+    console.log('Connected to MongoDB');
 
     app.listen(PORT, () => {
-      console.log(`🚀 Server is running on http://localhost:${PORT}`);
+      console.log(` Server is running on http://localhost:${PORT}`);
     });
   } catch (error) {
-    console.error('❌ MongoDB connection failed:', error);
-    process.exit(1); // Exit the app if DB connection fails
+    console.error(' MongoDB connection failed:', error);
+    process.exit(1); 
   }
 }
 
